@@ -14,7 +14,7 @@ Each of the use cases is separated into its own folder. Those use cases would be
 Before diving into these scripts, ensure you have the following:
 
 - **Jungle Scout Subscription**: You'll need a subscription to either the Jungle Scout Suite or Professional (Pro) plans to access the Jungle Scout API. Once you've used your trial credits, continuing to access the Jungle Scout API requires an API subscription plan.
-- **A Google Spreadsheet**: For each script, you'll need a Google Spreadsheet relevant to your use case. Important: you'll need the Sheet ID from the spreadsheet's URL for the scripts to function correctly. Here is the [Organic Impressions Estimator](https://www.junglescout.com) as a starting point. 
+- **A Google Spreadsheet**: For each script, you'll need a Google Spreadsheet relevant to your use case. Important: you'll need the Sheet ID from the spreadsheet's URL for the scripts to function correctly. You can copy the [Organic Impressions Estimator](https://docs.google.com/spreadsheets/d/1BQZPbFI2K2kI6sAEvi3sm04Tfsdl_3YCrPAinZ7SDyY) template as a starting point. 
 - **A Jungle Scout API Key**: Authentication with the Jungle Scout API requires an API key. This includes the API key itself and the name associated with your API key. These details are crucial for setting up the environment variables within your Google Apps Script project.
 
 ### Setting Environment Variables in Google Scripts
