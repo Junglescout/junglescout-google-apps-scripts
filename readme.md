@@ -57,17 +57,45 @@ For comprehensive guidance on using `clasp`, consult the [`clasp` documentation]
 ## Usage
 These scripts are designed to interact with the Jungle Scout API and populate Google Sheets with the data you need. Here's how to get started with a basic script:
 1. Ensure you have met all the prerequisites.
-2. Follow the installation steps to set up your script.
-3. Customize the script parameters to suit your specific needs, such as adjusting API endpoints or data processing functions.
-4. Run the script and watch as your Google Sheet gets populated with data from the Jungle Scout API.
+2. Copy the appropriate template file. 
+   - [Organic Impression Calculator](https://docs.google.com/spreadsheets/d/1BQZPbFI2K2kI6sAEvi3sm04Tfsdl_3YCrPAinZ7SDyY)
+   - [Historical Volume Charts](https://docs.google.com/spreadsheets/d/17JBbXSH4rwhspOmQqyNrhYXRqRmxkgXZSiIP-90JSC4)
+3. Follow the installation steps to set up your script.
+4. Customize the script parameters to suit your specific needs, such as adjusting API endpoints or data processing functions.
+5. Run the script and watch as your Google Sheet gets populated with data from the Jungle Scout API.
 
 Remember, these scripts make live calls to the Jungle Scout API, which will count against your monthly limit. Be careful when testing new functionality.
 
+## Automating Your Scripts with Time-Based Triggers
+
+Google Apps Script provides a powerful feature called **Triggers** which allows you to run functions automatically based on certain conditions, including time intervals. This is especially useful if you want to automate repetitive tasks like pulling ranking data from Jungle Scout and saving it to your Google Sheet on a daily basis.
+
+### Setting Up a Time-Based Trigger
+
+Follow these steps to set up a recurring job for your script:
+
+1. **Open the Apps Script Project**: Navigate to your Google Spreadsheet, go to **Extensions > Apps Script** to open the project containing the script you wish to automate.
+2. **Access Triggers**: In the Apps Script editor, find and click on the clock icon in the left sidebar to open the **Triggers** page.
+3. **Add a Trigger**: Click on the "+ Add Trigger" button at the bottom right corner of the page.
+4. **Configure the Trigger**:
+    - **Choose which function to run**: Select the function you want to automate from the dropdown menu.
+    - **Choose which deployment should run**: Typically, you'll select "Head" for scripts still in development.
+    - **Select event source**: Choose "Time-driven" to set up a recurring trigger.
+    - **Select type of time based trigger**: Pick the interval that suits your need. For daily updates, you might select "Day timer" and then specify the time of day you want the script to run.
+5. **Save**: After configuring your trigger, click "Save".
+
+Now, your selected function will automatically run at the intervals you specified, pulling data into your Google Sheet without any manual intervention needed.
+
+### Notes and Best Practices
+
+- **API Call Limits**: Remember that automated calls to the Jungle Scout API will count against your monthly limit. Plan your triggers accordingly to avoid unexpected quota exceedances.
+- **Testing**: It's a good idea to manually test your script to ensure it behaves as expected before automating it with triggers.
+- **Monitoring**: You can monitor the execution of scheduled functions and check for any errors by going to the **Executions** tab in the Apps Script editor.
+
+By leveraging time-based triggers, you can automate your data collection process, ensuring your Google Sheet always has the latest information from Jungle Scout without needing to manually run scripts.
+
 ## Contributing
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. More details on how to contribute will be provided soon.
-
-## License
-TBD - This project is yet to be licensed. Stay tuned for updates.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
