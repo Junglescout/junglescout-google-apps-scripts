@@ -19,8 +19,8 @@ Before diving into these scripts, ensure you have the following:
 
 ### Setting Environment Variables in Google Scripts
 1. Open your Google Spreadsheet.
-2. Navigate to **Extensions > Apps Script**.
-3. In the Apps Script, click on **Project Settings > Script properties**.
+2. Navigate to `Extensions > Apps Script`.
+3. In the Apps Script, click on `Project Settings > Script properties`.
 4. Add the following script properties with their respective values:
    - `API_KEY`: Your Jungle Scout API key.
    - `API_KEY_NAME`: The name associated with your Jungle Scout API key.
@@ -76,13 +76,13 @@ Follow these steps to set up a recurring job for your script:
 
 1. **Open the Apps Script Project**: Navigate to your Google Spreadsheet, go to **Extensions > Apps Script** to open the project containing the script you wish to automate.
 2. **Access Triggers**: In the Apps Script editor, find and click on the clock icon in the left sidebar to open the **Triggers** page.
-3. **Add a Trigger**: Click on the "+ Add Trigger" button at the bottom right corner of the page.
+3. **Add a Trigger**: Click on the `+ Add Trigger` button at the bottom right corner of the page.
 4. **Configure the Trigger**:
     - **Choose which function to run**: Select the function you want to automate from the dropdown menu.
-    - **Choose which deployment should run**: Typically, you'll select "Head" for scripts still in development.
-    - **Select event source**: Choose "Time-driven" to set up a recurring trigger.
-    - **Select type of time based trigger**: Pick the interval that suits your need. For daily updates, you might select "Day timer" and then specify the time of day you want the script to run.
-5. **Save**: After configuring your trigger, click "Save".
+    - **Choose which deployment should run**: Typically, you'll select `Head` for scripts still in development.
+    - **Select event source**: Choose `Time-driven` to set up a recurring trigger.
+    - **Select type of time based trigger**: Pick the interval that suits your need. For daily updates, you'll select `Day timer` and then specify the time of day you want the script to run.
+5. **Save**: After configuring your trigger, click `Save`.
 
 Now, your selected function will automatically run at the intervals you specified, pulling data into your Google Sheet without any manual intervention needed.
 
@@ -110,7 +110,7 @@ A: Yes, these scripts make live calls to the Jungle Scout API. Each call counts 
 A: Absolutely! While contributions to the code are welcome, we also appreciate documentation improvements, bug reports, and use case suggestions.
 
 **Q: Who do I contact if I have questions or need support?**  
-A: For now, please open an issue in this repository for any questions or support needs. This section will be updated with more contact options soon.
+A: For now, please open an issue in this repository if you find a bug. For support with Jungle Scout's API, please contact Jungle Scout at [support\@junglescout.com](mailto:support@junglescout.com?subject=API%20Question).
 
 ## Additional Information
 Please use these projects at your own risk. These scripts interact with the Jungle Scout API in real time, consuming your available call limit. Always test scripts in a controlled environment before applying them to critical operations.
