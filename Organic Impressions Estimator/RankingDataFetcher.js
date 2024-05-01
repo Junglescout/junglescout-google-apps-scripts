@@ -20,8 +20,7 @@ function getAllRankingData(url, options, primaryAsin, competitorAsins, rankedKey
         include_variants: true,
         min_word_count: 1,
         max_word_count: 10,
-        min_organic_product_count: 1,
-        sort: '-monthly_search_volume_exact',
+        min_organic_product_count: 1
       },
     },
   });
