@@ -88,10 +88,10 @@ function getAllRankingData(url, options, primaryAsin, competitorAsins, rankedKey
     if (!formattedMostRecentDate || formattedUpdatedAt > formattedMostRecentDate) {
       // Check if formattedUpdatedAt is within the last 90 days
       const today = new Date();
-      const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const ninetyDaysAgo = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
       const updatedAtDate = new Date(formattedUpdatedAt);
       
-      if (updatedAtDate >= sevenDaysAgo) {
+      if (updatedAtDate >= ninetyDaysAgo) {
         const rowData = [
           primaryAsin,
           keyword,
