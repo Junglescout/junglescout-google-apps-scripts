@@ -4,7 +4,8 @@ function createChartTab() {
 
   // If sheet does not exist create it
   if (!chartSheet) {
-    chartSheet = ss.insertSheet("Charts", 1);
+    const numSheets = ss.getNumSheets();
+    chartSheet = ss.insertSheet("Charts", numSheets - 4);
     Logger.log(`Charts sheet created.`)
   } else {
     chartSheet.clear(); // Clear existing content

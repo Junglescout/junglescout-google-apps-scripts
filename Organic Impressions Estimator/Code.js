@@ -309,7 +309,7 @@ function populateImpressionsChart() {
   dataRange.setNumberFormat('#,##0');
 
   // Format column widths
-  chartSheet.setColumnWidths(2,lastRow, 175);
+  chartSheet.setColumnWidths(2,lastColumn, 175);
 
   // Format the headers
   chartSheet.getRange(1, 1, 1, lastColumn)
