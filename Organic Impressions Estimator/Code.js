@@ -99,8 +99,18 @@ function fetchHistoricalSearchVolumesV2() {
   // Prepare the target sheet for keyword volume
   let keywordVolumeSheet = ss.getSheetByName('Keyword Volume');
   if (!keywordVolumeSheet) {
-    keywordVolumeSheet = ss.insertSheet('Keyword Volume', 1);
+    const numSheets = ss.getNumSheets();
+    keywordVolumeSheet = ss.insertSheet('Keyword Volume', numSheets - 2);
     Logger.log(`Keyword Volume sheet created.`);
+    
+    // Freeze the first column
+    keywordVolumeSheet.setFrozenColumns(1);
+
+    // Freeze the first two rows
+    keywordVolumeSheet.setFrozenRows(2);
+    
+    // Set the background color of the first two rows to '#EFEFEF'
+    keywordVolumeSheet.getRange(1, 1, 2, keywordVolumeSheet.getMaxColumns()).setBackground('#EFEFEF');
   }
 
   // Initialize weeks to add as 0
