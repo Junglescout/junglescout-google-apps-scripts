@@ -292,6 +292,16 @@ function populateImpressionsChart() {
   const ss = SpreadsheetApp.openById(TARGET_SPREADSHEET_ID);
   const sourceSheet = ss.getSheetByName('Organic Impressions');
 
+  // Check if there is impression data starting in column B
+  const impressionDataRange = sourceSheet.getRange(2, 2, sourceSheet.getLastRow() - 1, 1);
+  const impressionData = impressionDataRange.getValues();
+  const hasImpressionData = impressionData.some(row => row[0] !== "");
+
+  if (!hasImpressionData) {
+    SpreadsheetApp.getUi().alert("There is no impression data to display.");
+    return;
+  }
+
   // Create the charts tab if it doesn't exist & clear if it does
   createChartTab();
   const chartSheet = ss.getSheetByName("Charts");
