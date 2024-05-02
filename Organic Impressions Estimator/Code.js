@@ -220,10 +220,21 @@ function calculateOrganicImpressions() {
   const rankByDaySheet = ss.getSheetByName('Rank by Day');
   const keywordVolumeSheet = ss.getSheetByName('Keyword Volume');
 
+  // Prepare the target sheet for organic impressions
   let organicImpressionsSheet = ss.getSheetByName('Organic Impressions');
   if (!organicImpressionsSheet) {
-    organicImpressionsSheet = ss.insertSheet('Organic Impressions', ss.getSheets().length);
+    const numSheets = ss.getNumSheets();
+    organicImpressionsSheet = ss.insertSheet('Organic Impressions', numSheets - 3);
     Logger.log(`Organic Impressions sheet created.`);
+    
+    // Freeze the first column
+    organicImpressionsSheet.setFrozenColumns(1);
+
+    // Freeze the first row
+    organicImpressionsSheet.setFrozenRows(1);
+    
+    // Set the background color of the first row to '#EFEFEF'
+    organicImpressionsSheet.getRange(1, 1, 1, organicImpressionsSheet.getMaxColumns()).setBackground('#EFEFEF');
   }
 
   // Clear existing data in 'Organic Impressions'
@@ -255,8 +266,13 @@ function calculateOrganicImpressions() {
   const keywordsRange = organicImpressionsSheet.getRange(2, 1, data.keywords.length, 1);
   keywordsRange.setValues(data.keywords.map(keyword => [keyword]));
 
-  // Call the function to calculate and populate the Organic Impressions sheet
-  calculateAndPopulateOrganicImpressions(data, organicImpressionsSheet, filteredDates);
+  // Check if there are any matching dates
+  if (filteredDates.length === 0) {
+    SpreadsheetApp.getUi().alert("There are no dates for keyword volumes and ranks that overlap.");
+  } else {
+    // Call the function to calculate and populate the Organic Impressions sheet
+    calculateAndPopulateOrganicImpressions(data, organicImpressionsSheet, filteredDates);
+  }
 
   // Format the rest of the Keyword Volumn sheet
   setColumnWidths(organicImpressionsSheet);
@@ -266,7 +282,7 @@ function calculateOrganicImpressions() {
   Logger.log(`dataRange: ${dataRange}`)
   dataRange.setNumberFormat('#,##0');
 
-  // Format the headers
+  // Format the date headers
   organicImpressionsSheet.getRange(1, 1, 1, lastColumn)
         .setFontWeight('bold')
         .setBackground('#EFEFEF');
