@@ -86,12 +86,13 @@ function getAllRankingData(url, options, primaryAsin, competitorAsins, rankedKey
 
     // Compare formatted date strings
     if (!formattedMostRecentDate || formattedUpdatedAt > formattedMostRecentDate) {
-      // Check if formattedUpdatedAt is within the last 90 days
+      // Check if formattedUpdatedAt is within the last 7 days
       const today = new Date();
-      const ninetyDaysAgo = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
+      const sevenDaysAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
       const updatedAtDate = new Date(formattedUpdatedAt);
       
-      if (updatedAtDate >= ninetyDaysAgo) {
+      // Only save data for keyword ranks updated within the last 7 days
+      if (updatedAtDate >= sevenDaysAgo) {
         const rowData = [
           primaryAsin,
           keyword,
@@ -117,7 +118,7 @@ function getAllRankingData(url, options, primaryAsin, competitorAsins, rankedKey
         Logger.log(`newRankingData: ${newRankingData}`);
         Logger.log(`Saved data for ASIN: ${primaryAsin}, Keyword: ${keyword}, Organic Rank: ${organicRank}, Sponsored Rank: ${sponsoredRank}`);
       } else {
-        Logger.log(`Skipped keyword "${keyword}" with formattedUpdatedAt: ${formattedUpdatedAt} (not within the last 90 days)`);
+        Logger.log(`Skipped keyword "${keyword}" with formattedUpdatedAt: ${formattedUpdatedAt} (not within the last 7 days)`);
       }
     }
   }
