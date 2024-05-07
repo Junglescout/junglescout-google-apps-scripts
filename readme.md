@@ -5,6 +5,9 @@ Welcome to the **Google Apps Scripts for Jungle Scout's API** repository! This p
 
 See the [Jungle Scout API Documentation](https://developer.junglescout.com) and the [Jungle Scout Postman Collection](https://postman.junglescout.com) for more information about the Jungle Scout API.
 
+> [!WARNING]  
+> These scripts make live calls to the Jungle Scout API, which will count toward your monthly limit. Be careful when testing new functionality.
+
 ## Getting Started
 
 ### Project Structure
@@ -54,17 +57,57 @@ By creating a separate "clasp project" for each folder, you ensure that each set
 
 For comprehensive guidance on using `clasp`, consult the [`clasp` documentation](https://github.com/google/clasp).
 
-## Usage
-These scripts are designed to interact with the Jungle Scout API and populate Google Sheets with the data you need. Here's how to get started with a basic script:
-1. Ensure you have met all the prerequisites.
-2. Copy the appropriate template file. 
-   - [Organic Impression Calculator](https://docs.google.com/spreadsheets/d/1BQZPbFI2K2kI6sAEvi3sm04Tfsdl_3YCrPAinZ7SDyY)
-   - [Historical Volume Charts](https://docs.google.com/spreadsheets/d/17JBbXSH4rwhspOmQqyNrhYXRqRmxkgXZSiIP-90JSC4)
-3. Follow the installation steps to set up your script.
-4. Customize the script parameters to suit your specific needs, such as adjusting API endpoints or data processing functions.
-5. Run the script and watch as your Google Sheet gets populated with data from the Jungle Scout API.
+## Organic Impressions Estimator
 
-Remember, these scripts make live calls to the Jungle Scout API, which will count against your monthly limit. Be careful when testing new functionality.
+### Project Description
+The Organic Impressions Estimator is a Google Apps Script project designed to estimate the number of organic impressions a product listing receives on Amazon based on its search rank and relevant keywords. This tool helps sellers and marketers gauge the visibility and potential traffic their products may receive.
+
+### Usage
+1. Complete the "Installing Your Scripts" section to set up the necessary files in your Google Apps Script project.
+2. Copy the [Organic Impressions Estimator](https://docs.google.com/spreadsheets/d/1BQZPbFI2K2kI6sAEvi3sm04Tfsdl_3YCrPAinZ7SDyY) Google Sheet template.
+3. Add your environment variables to Apps Script project settings as outlined in the [Setting Environment Variables](#setting-environment-variables-in-google-scripts) section. 
+4. On the "ASINs" tab, enter your ASIN in the cell below the "Your ASIN" label. This is the primary ASIN you want to analyze. 
+5. Enter additional competitor ASINs below the "Competitor ASINs" label if you want to pull in additional keywords.
+6. Select the marketplace you want to analyze.
+7. In the cell below the "Minimum 30D Exact Vol." label, set the minimum 30-day exact search volume. This is the minimum volume threshold for keywords you want to save.
+8. In the cell below the "Ranked Keywords Only" label, select whether or not you only want to save keywords that your ASIN is organically ranking for.
+9. Assign scripts to each of the buttons in the "ASINs" tab. Click the button, select the 3-dot menu, select "Assign script", and add the following function name.
+   * Test Keyword Filters &rarr; `fetchKeywords`
+   * Get Ranks &rarr; `getRanksAndPopulateRankByDay`
+   * Get Historical Volume &rarr; `fetchHistoricalSearchVolumesV2`
+   * Estimate Impressions &rarr; `calculateOrganicImpressions`
+   * Create Chart &rarr; `populateImpressionsChart`
+10. Run "Test Keyword Filters" to see what keywords will be retrieved from the API and saved to your sheet.
+11. Run "Get Ranks" to pull ranking data for your ASIN, which will populate the "Raw Rank Data" and "Rank by Day" tabs. 
+   * It is suggested that you set this up on a daily schedule to run automatically. [This section](#automating-your-scripts-with-time-based-triggers) outlines the steps to do this.
+12. Run "Get Historical Volume" to pull historical search volumes and populate the "Keyword Volume" tab.
+   * Set this up to run on a recurring basis. Consider checking multiple times per week to ensure you have the most recent keyword volumes available.
+13. Allow a week or so to collect ranking and search volume data that covers the same time period. This overlapping data is necessary to estimate organic impressions. Once you have this overlap, run "Estimate Impressions" to calculate the estimated organic impressions in the "Organic Impressions" sheet.
+14. Run "Create Chart" to populate the "Charts" tab with a chart of the estimated impressions for your product's most important keywords.
+
+## Historical Volume Charts
+
+### Project Description
+The Historical Volume Charts project allows users to generate historical sales volume charts for the top keywords associated with specific ASINs directly within a Google Spreadsheet. This tool provides valuable insights into product performance over time, enabling sellers to make data-driven decisions.
+
+### Usage
+1. Complete the "Installing Your Scripts" section to set up the necessary files in your Google Apps Script project.
+2. Open the [Historical Volume Charts](https://docs.google.com/spreadsheets/d/17JBbXSH4rwhspOmQqyNrhYXRqRmxkgXZSiIP-90JSC4) Google Sheet template.
+3. Add your environment variables to Apps Script project settings as outlined in the [Setting Environment Variables](#setting-environment-variables-in-google-scripts) section. 
+4. On the "ASINs" tab, enter your ASIN in the cell below the "Your ASIN" label. This is the primary ASIN you want to analyze. 
+5. Enter additional competitor ASINs below the "Competitor ASINs" label if you want to pull in additional keywords.
+6. Select the marketplace you want to analyze.
+7. In the cell below the "Minimum 30D Exact Vol." label, set the minimum 30-day exact search volume. This is the minimum volume threshold for keywords you want to save.
+8. In the cell below the "Ranked Keywords Only" label, select whether or not you only want to save keywords that your ASIN is organically ranking for.
+9. Assign scripts to each of the buttons in the "ASINs" tab. Click the button, select the 3-dot menu, select "Assign script", and add the following function name.
+   * Get Keywords &rarr; `fetchKeywords`
+   * Get History &rarr; `fetchHistoricalSearchVolumes`
+   * Generate Charts &rarr; `createCharts`
+10. Run "Get Kewyords" to fetch the keywords from Jungle Scout and populate the table in the "ASINs" tab.
+11. Run "Get History" to pull historical search volumes and populate the "Keyword Volume" tab.
+   * You can set this up to run on a schedule. [This section](#automating-your-scripts-with-time-based-triggers) outlines the steps to do this.
+14. Run "Generate Charts" to populate the "Charts" tab with historical search volume charts for your top keywords.
+
 
 ## Automating Your Scripts with Time-Based Triggers
 
