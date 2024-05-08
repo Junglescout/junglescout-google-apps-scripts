@@ -35,7 +35,29 @@ function getAllRankingData(url, options, primaryAsin, competitorAsins, rankedKey
   Logger.log(`Received ${jsonResponse.data.length} keywords`);
 
   const ss = SpreadsheetApp.openById(TARGET_SPREADSHEET_ID);
-  const rankingSheet = ss.getSheetByName('Raw Rank Data');
+  let rankingSheet = ss.getSheetByName('Raw Rank Data');
+
+  // Create the 'Raw Rank Data' sheet if it doesn't exist
+  if (!rankingSheet) {
+    rankingSheet = ss.insertSheet('Raw Rank Data', ss.getNumSheets());
+    const headers = [
+      'ASIN',
+      'Keyword',
+      'Date',
+      'Organic Rank',
+      'Sponsored Rank',
+      'Overall Rank',
+      'Exact Bid',
+      'Broad Bid',
+      '30-Day Volume'
+    ];
+    rankingSheet.appendRow(headers);
+    
+    // Freeze the top row, make it bold, and set background color
+    rankingSheet.setFrozenRows(1);
+    rankingSheet.getRange('A1:I1').setFontWeight('bold').setBackground('#EFEFEF');
+  }
+
   const existingData = rankingSheet.getDataRange().getValues();
 
   let continueFetching = true;
@@ -189,15 +211,23 @@ function updateRankingSheet(newRankingData, competitorAsins) {
  */
 function updateRankByDaySheet(newRankingData) {
   const ss = SpreadsheetApp.openById(TARGET_SPREADSHEET_ID);
-  const rankByDaySheet = ss.getSheetByName('Rank by Day');
+  let rankByDaySheet = ss.getSheetByName('Rank by Day');
+
+  // Create the 'Rank by Day' sheet if it doesn't exist
+  if (!rankByDaySheet) {
+    const numSheets = ss.getNumSheets();
+    rankByDaySheet = ss.insertSheet('Rank by Day', numSheets - 1);
+    populateRankByDaySheet();
+  }
 
   // Get the existing data and headers from the "Rank by Day" sheet
   const existingData = rankByDaySheet.getDataRange().getValues();
   let existingHeaders = existingData[0];
 
   // If the sheet is empty, create a new header row with "Keyword" as the first column
-  if (existingHeaders.length === 0) {
+  if (existingHeaders.length === 0 || existingHeaders[0] !== "Keyword") {
     existingHeaders = ["Keyword"];
+    rankByDaySheet.getRange(1, 1, 1, 1).setValue("Keyword");
   }
 
   // Format existing header dates to 'YYYY-MM-DD' format
@@ -227,8 +257,12 @@ function updateRankByDaySheet(newRankingData) {
 
   // Update the headers in the sheet if new columns were added
   if (existingHeaders.length > rankByDaySheet.getLastColumn()) {
-    rankByDaySheet.getRange(1, 1, 1, existingHeaders.length).setValues([existingHeaders]).setFontWeight('bold');
+    rankByDaySheet.getRange(1, 1, 1, existingHeaders.length).setValues([existingHeaders]).setFontWeight('bold').setBackground('#EFEFEF');
   }
+
+  // Freeze the first column and first row
+  rankByDaySheet.setFrozenRows(1);
+  rankByDaySheet.setFrozenColumns(1);
 
   // Create a map of existing keywords and their row numbers
   const keywordMap = new Map();

@@ -24,7 +24,7 @@ function runAllSheets() {
   }
 
   fetchKeywords()
-  getRanksAndPopulateRankByDay()
+  fetchRankingData()
   fetchHistoricalSearchVolumesV2()
   calculateOrganicImpressions()
   populateImpressionsChart()
@@ -73,17 +73,6 @@ function fetchKeywords() {
 
   getAllKeywords(initialUrl, options, sheet, maxKeywords, rankedKeywordsOnly);
 }
-
-/**
- * Fetches keywords and ranks for ASINs, updates the spreadsheet, then
- * collects all the data from the "Raw Rank Data" sheet and populates the "Rank by Day" sheet.
- */
-
-function getRanksAndPopulateRankByDay() {
-  fetchRankingData()
-  populateRankByDaySheet()
-}
-
 
 /**
  * Fetches keywords and ranks for ASINs and updates the spreadsheet.
@@ -188,8 +177,18 @@ function fetchHistoricalSearchVolumesV2() {
   // Prepare the target sheet for keyword volume
   let keywordVolumeSheet = ss.getSheetByName('Keyword Volume');
   if (!keywordVolumeSheet) {
-    keywordVolumeSheet = ss.insertSheet('Keyword Volume', 1);
+    const numSheets = ss.getNumSheets();
+    keywordVolumeSheet = ss.insertSheet('Keyword Volume', numSheets - 2);
     Logger.log(`Keyword Volume sheet created.`);
+    
+    // Freeze the first column
+    keywordVolumeSheet.setFrozenColumns(1);
+
+    // Freeze the first two rows
+    keywordVolumeSheet.setFrozenRows(2);
+    
+    // Set the background color of the first two rows to '#EFEFEF'
+    keywordVolumeSheet.getRange(1, 1, 2, keywordVolumeSheet.getMaxColumns()).setBackground('#EFEFEF');
   }
 
   // Initialize weeks to add as 0
@@ -289,7 +288,6 @@ function fetchHistoricalSearchVolumesV2() {
   Logger.log(`This is the end.`)
 }
 
-
 /**
  * Calculates and populates the 'Organic Impressions' sheet with estimated organic impressions based on keyword ranks and search volumes.
  * Fetches data from the 'Rank by Day' and 'Keyword Volume' sheets, performs calculations to estimate daily organic impressions, and updates the 'Organic Impressions' sheet accordingly.
@@ -300,10 +298,21 @@ function calculateOrganicImpressions() {
   const rankByDaySheet = ss.getSheetByName('Rank by Day');
   const keywordVolumeSheet = ss.getSheetByName('Keyword Volume');
 
+  // Prepare the target sheet for organic impressions
   let organicImpressionsSheet = ss.getSheetByName('Organic Impressions');
   if (!organicImpressionsSheet) {
-    organicImpressionsSheet = ss.insertSheet('Organic Impressions', ss.getSheets().length);
+    const numSheets = ss.getNumSheets();
+    organicImpressionsSheet = ss.insertSheet('Organic Impressions', numSheets - 3);
     Logger.log(`Organic Impressions sheet created.`);
+    
+    // Freeze the first column
+    organicImpressionsSheet.setFrozenColumns(1);
+
+    // Freeze the first row
+    organicImpressionsSheet.setFrozenRows(1);
+    
+    // Set the background color of the first row to '#EFEFEF'
+    organicImpressionsSheet.getRange(1, 1, 1, organicImpressionsSheet.getMaxColumns()).setBackground('#EFEFEF');
   }
 
   // Clear existing data in 'Organic Impressions'
@@ -335,8 +344,13 @@ function calculateOrganicImpressions() {
   const keywordsRange = organicImpressionsSheet.getRange(2, 1, data.keywords.length, 1);
   keywordsRange.setValues(data.keywords.map(keyword => [keyword]));
 
-  // Call the function to calculate and populate the Organic Impressions sheet
-  calculateAndPopulateOrganicImpressions(data, organicImpressionsSheet, filteredDates);
+  // Check if there are any matching dates
+  if (filteredDates.length === 0) {
+    SpreadsheetApp.getUi().alert("There are no dates for keyword volumes and ranks that overlap.");
+  } else {
+    // Call the function to calculate and populate the Organic Impressions sheet
+    calculateAndPopulateOrganicImpressions(data, organicImpressionsSheet, filteredDates);
+  }
 
   // Format the rest of the Keyword Volumn sheet
   setColumnWidths(organicImpressionsSheet);
@@ -346,7 +360,7 @@ function calculateOrganicImpressions() {
   Logger.log(`dataRange: ${dataRange}`)
   dataRange.setNumberFormat('#,##0');
 
-  // Format the headers
+  // Format the date headers
   organicImpressionsSheet.getRange(1, 1, 1, lastColumn)
         .setFontWeight('bold')
         .setBackground('#EFEFEF');
@@ -355,6 +369,16 @@ function calculateOrganicImpressions() {
 function populateImpressionsChart() {
   const ss = SpreadsheetApp.openById(TARGET_SPREADSHEET_ID);
   const sourceSheet = ss.getSheetByName('Organic Impressions');
+
+  // Check if there is impression data starting in column B
+  const impressionDataRange = sourceSheet.getRange(2, 2, sourceSheet.getLastRow() - 1, 1);
+  const impressionData = impressionDataRange.getValues();
+  const hasImpressionData = impressionData.some(row => row[0] !== "");
+
+  if (!hasImpressionData) {
+    SpreadsheetApp.getUi().alert("There is no impression data to display.");
+    return;
+  }
 
   // Create the charts tab if it doesn't exist & clear if it does
   createChartTab();
@@ -373,7 +397,7 @@ function populateImpressionsChart() {
   dataRange.setNumberFormat('#,##0');
 
   // Format column widths
-  chartSheet.setColumnWidths(2,lastRow, 175);
+  chartSheet.setColumnWidths(2,lastColumn, 175);
 
   // Format the headers
   chartSheet.getRange(1, 1, 1, lastColumn)
