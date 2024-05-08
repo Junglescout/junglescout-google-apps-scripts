@@ -11,6 +11,25 @@ const AUTHORIZATION_TOKEN = `${API_KEY_NAME}:${API_KEY}`; // Build proper token 
  */
 const TARGET_SPREADSHEET_ID = scriptProperties.getProperty('TARGET_SPREADSHEET_ID');
 
+function runAllSheets() {
+  const ss = SpreadsheetApp.openById(TARGET_SPREADSHEET_ID);
+  const sheet = ss.getSheetByName('ASINs');
+  if (!sheet) return;
+
+  const response = Browser.msgBox('Warning', 'Running this action will use multiple API calls to populate all of the data in each sheet. Consider testing each individual action first using the boxes to the right before you continue. Do you wish to proceed?', Browser.Buttons.OK_CANCEL);
+
+  if (response === 'cancel') {
+    Logger.log('Run all sheets aborted by the user.');
+    return;
+  }
+
+  fetchKeywords()
+  getRanksAndPopulateRankByDay()
+  fetchHistoricalSearchVolumesV2()
+  calculateOrganicImpressions()
+  populateImpressionsChart()
+}
+
 /**
  * Fetches keywords from the Jungle Scout API and updates the spreadsheet.
  */
@@ -54,6 +73,17 @@ function fetchKeywords() {
 
   getAllKeywords(initialUrl, options, sheet, maxKeywords, rankedKeywordsOnly);
 }
+
+/**
+ * Fetches keywords and ranks for ASINs, updates the spreadsheet, then
+ * collects all the data from the "Raw Rank Data" sheet and populates the "Rank by Day" sheet.
+ */
+
+function getRanksAndPopulateRankByDay() {
+  fetchRankingData()
+  populateRankByDaySheet()
+}
+
 
 /**
  * Fetches keywords and ranks for ASINs and updates the spreadsheet.
