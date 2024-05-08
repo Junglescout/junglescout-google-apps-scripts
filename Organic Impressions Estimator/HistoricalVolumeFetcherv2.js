@@ -39,8 +39,16 @@ function getHistoricalDataForKeyword(keyword, marketplace, startDate, endDate) {
  * @param {GoogleAppsScript.Spreadsheet.Sheet} keywordVolumeSheet - The Google Sheet to check for existing keywords.
  */
 function separateKeywords(rankByDayKeywords, keywordVolumeSheet) {
-  const existingKeywordsRange = keywordVolumeSheet.getRange("A3:A" + keywordVolumeSheet.getLastRow());
+  const lastRow = keywordVolumeSheet.getLastRow();
+
+  if (lastRow < 3) {
+    // If the sheet has less than 3 rows (header rows), assume all keywords are new
+    return [rankByDayKeywords, []];
+  }
+
+  const existingKeywordsRange = keywordVolumeSheet.getRange("A3:A" + lastRow);
   const existingKeywords = existingKeywordsRange.getValues().flat().filter(String);
+
   const newKeywords = rankByDayKeywords.filter(keyword => !existingKeywords.includes(keyword));
   const existingKeywordsToUpdate = rankByDayKeywords.filter(keyword => existingKeywords.includes(keyword));
 
