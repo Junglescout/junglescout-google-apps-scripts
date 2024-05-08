@@ -217,6 +217,7 @@ function updateRankByDaySheet(newRankingData) {
   if (!rankByDaySheet) {
     const numSheets = ss.getNumSheets();
     rankByDaySheet = ss.insertSheet('Rank by Day', numSheets - 1);
+    populateRankByDaySheet();
   }
 
   // Get the existing data and headers from the "Rank by Day" sheet
