@@ -24,7 +24,7 @@ function runAllSheets() {
   }
 
   fetchKeywords()
-  getRanksAndPopulateRankByDay()
+  fetchRankingData()
   fetchHistoricalSearchVolumesV2()
   calculateOrganicImpressions()
   populateImpressionsChart()
@@ -75,17 +75,6 @@ function fetchKeywords() {
 }
 
 /**
- * Fetches keywords and ranks for ASINs, updates the spreadsheet, then
- * collects all the data from the "Raw Rank Data" sheet and populates the "Rank by Day" sheet.
- */
-
-function getRanksAndPopulateRankByDay() {
-  fetchRankingData()
-  populateRankByDaySheet()
-}
-
-
-/**
  * Fetches keywords and ranks for ASINs and updates the spreadsheet.
  */
 function fetchRankingData() {
@@ -107,6 +96,65 @@ function fetchRankingData() {
   const newRankingData = []; // Initialize newRankingData here
   
   getAllRankingData(initialUrl, options, primaryAsin, competitorAsins, rankedKeywordsOnly, minMonthlySearchVolume, newRankingData);
+}
+
+/**
+ * Collects all the data from the "Raw Rank Data" sheet and populates the "Rank by Day" sheet.
+ */
+function populateRankByDaySheet() {
+  const ss = SpreadsheetApp.openById(TARGET_SPREADSHEET_ID);
+  const rankingSheet = ss.getSheetByName('Raw Rank Data');
+  const rankingData = rankingSheet.getDataRange().getValues();
+
+  // Remove header row from rankingData
+  rankingData.shift();
+
+  // Create newRankingData array with required columns, skipping rows with null organic_rank
+  const newRankingData = rankingData
+    .filter(row => row[3] !== '')
+    .map(row => {
+      const date = new Date(row[2]);
+      const formattedDate = date.toISOString().split('T')[0];
+      return [row[0], row[1], formattedDate, row[3]];
+    });
+
+  Logger.log(`newRankingData: ${JSON.stringify(newRankingData)}`);
+
+  // Sort newRankingData by ascending date
+  newRankingData.sort((a, b) => new Date(a[2]) - new Date(b[2]));
+
+  Logger.log(`Sorted newRankingData: ${JSON.stringify(newRankingData)}`);
+
+  // Group newRankingData by keyword
+  const groupedData = newRankingData.reduce((acc, row) => {
+    const keyword = row[1];
+    if (!acc[keyword]) {
+      acc[keyword] = [];
+    }
+    acc[keyword].push(row);
+    return acc;
+  }, {});
+
+  Logger.log(`Grouped data: ${JSON.stringify(groupedData)}`);
+
+  // Create an array to store the updated ranking data
+  const updatedRankingData = [];
+
+  // Iterate over each group of keyword data
+  Object.entries(groupedData).forEach(([keyword, keywordData]) => {
+    Logger.log(`Processing keyword: ${keyword}`);
+    Logger.log(`Keyword data: ${JSON.stringify(keywordData)}`);
+
+    // Add all rows for each keyword to the updated ranking data
+    keywordData.forEach(row => {
+      updatedRankingData.push(row);
+    });
+  });
+
+  Logger.log(`Updated ranking data: ${JSON.stringify(updatedRankingData)}`);
+
+  // Call updateRankByDaySheet with the updated ranking data
+  updateRankByDaySheet(updatedRankingData);
 }
 
 /**
